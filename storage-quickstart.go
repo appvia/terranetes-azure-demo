@@ -105,25 +105,5 @@ func main() {
 
 	fmt.Println(downloadedData.String())
 	fmt.Println("Blob container creation and file upload complete!")
-	/*
-		fmt.Printf("Press enter key to delete the blob, example container, and exit the application.\n")
-		bufio.NewReader(os.Stdin).ReadBytes('\n')
-		fmt.Printf("Cleaning up.\n")
-
-		// Delete the blob
-		fmt.Printf("Deleting the blob " + blobName + "\n")
-
-		_, err = blobClient.Delete(ctx, nil)
-		if err != nil {
-			log.Fatalf("Failure: %+v", err)
-		}
-
-		// Delete the container
-		fmt.Printf("Deleting the blob " + containerName + "\n")
-		_, err = containerClient.Delete(ctx, nil)
-
-		if err != nil {
-			log.Fatalf("Failure: %+v", err)
-		}
-	*/
+	os.Exit(0)
 }
