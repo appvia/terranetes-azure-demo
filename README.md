@@ -1,13 +1,3 @@
----
-page_type: sample
-languages:
-- go
-products:
-- azure
-description: "This repository contains a simple sample project to help you getting started with Azure storage using Go as the development language."
-urlFragment: azure-storage-example
----
-
 # Transfer objects to and from Azure Blob storage using Go
 
 This repository contains a simple sample project to help you getting started with Azure storage using Go as the development language.
