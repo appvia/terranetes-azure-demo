@@ -1,0 +1,32 @@
+---
+apiVersion: terraform.appvia.io/v1alpha1
+kind: Configuration
+metadata:
+  name: storageacct
+spec:
+  # ssh git::ssh://git@example.com/foo/bar
+  module: https://github.com/Azure-Terraform/terraform-azurerm-storage-account.git?ref=v0.14.0
+  enableAutoApproval: true
+
+  # Where is the TF provider located in the cluster, and which one do we use?
+  providerRef:
+    namespace: terraform-system
+    name: azure
+
+  # Outputs we want to capture as K8s secrets.
+  writeConnectionSecretToRef:
+    name: appviastor3
+    keys:
+      - name
+      - primary_access_key
+      - primary_blob_endpoint
+  
+  # Inputs (variables.yaml) to the TF module.
+  variables:
+    resource_group_name: legendary-robot 
+    name: appviastor3
+    location: eastus
+    replication_type: LRS
+    shared_access_key_enabled: true
+    tags: 
+      name: test

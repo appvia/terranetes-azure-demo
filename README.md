@@ -1,53 +1,85 @@
-# Transfer objects to and from Azure Blob storage using Go
+# Appvia Terranetes for Azure Demo
 
-This repository contains a simple sample project to help you getting started with Azure storage using Go as the development language.
+This repository contains a simple sample project and yaml to help you understand and get started using Appvia's Terranetes controller to provision Azure Cloud Resources.
 
-## Prerequisites
+## Prerequisites for the Terraform Controller
+* You must have a Kubernetes cluster.
+* Helm installed.
+* If you don't have an Azure subscription, create a [free account](https://portal.azure.com/#create/Microsoft.StorageAccount-ARM) before you begin.
 
-To complete this tutorial:
+Start by adding the Appvia terraform controller repo to helm:
+```bash
+helm repo add appvia https://terraform-controller.appvia.io
+helm repo update
+```
+
+Next Deploy the controller:
+```bash
+helm install -n terraform-system terraform-controller appvia/terraform-controller --create-namespace
+```
+
+Check that the services and pods were created:
+```bash
+kubectl -n terraform-system get pods
+```
+
+Configure and apply the secret that the controller will use to communicate with your Azure account:
+```bash
+kubectl -n terraform-system create secret generic azure \
+  --from-literal=ARM_CLIENT_ID=$ARM_CLIENT_ID \
+  --from-literal=ARM_CLIENT_SECRET=$ARM_CLIENT_SECRET \
+  --from-literal=ARM_SUBSCRIPTION_ID=$ARM_SUBSCRIPTION_ID \
+  --from-literal=ARM_TENANT_ID=$ARM_TENANT_ID
+```
+You'll replace the $ items with your configuration.
+
+## Deploying the Azure provider
+You'll deploy the Azure provider into the same namespace that the controller is in. In this case, terraform-system:
+```bash
+kubectl apply -f ./yaml/azure-provider.yaml -n terraform-system
+```
+
+## Creating Cloud Resources
+In this demo, we're creating a storage account using the Terraform controller.
+* You will need to edit the 'variables:' section of ./yaml/azure-deployment.yaml. Ensure the following sections match your configuration:
+
+```yaml
+  variables:
+    resource_group_name: legendary-robot 
+    name: appviastor3
+    location: eastus
+    replication_type: LRS
+    shared_access_key_enabled: true
+    tags: 
+      name: test
+```
+Once configured, apply the deployment to a namespace of your choosing (in this case, I'm using a demo namespace.)
+
+```bash
+kubectl apply -f ./yaml/azure-deployment.yaml -n demo
+```
+
+Now you can watch the progress of the apply, checking for the completion of the pods in the namespace you just deployed to:
+```bash
+watch kubectl get pods -n demo
+```
+
+Once you see the 'apply' pod completed, you can check it's logs to see the outcome:
+```bash
+kubectl logs $pod_name_here -n demo
+```
+
+## Using the cloud resource
+The Go application in this repo was written to check for enviornment variables that are exposed to the pod as secrets from the output of the Terranetes deployment. In this example, you can simply export the two keys locally to your shell and go run the application. To use in a kubernetes cluster, ensure that these secrets are created and available to the pod on deployment. An example deployment of this application is included at ./yaml/container.yaml
+
+## Prerequisites for the Go Application (Local Development)
+
+To work with this application locally:
 
 * Install [Go](https://golang.org/dl/) 1.8 or later
 
-If you don't have an Azure subscription, create a [free account](https://portal.azure.com/#create/Microsoft.StorageAccount-ARM) before you begin.
-
-## Create a storage account using the Azure portal
-
-First, create a new general-purpose storage account to use for this quickstart.
-
-1. Go to the [Azure portal](https://portal.azure.com/#create/Microsoft.StorageAccount-ARM) create a storage account menu.
-2. Enter a unique name for your storage account. Keep these rules in mind for naming your storage account:
-    - The name must be between 3 and 24 characters in length.
-    - The name may contain numbers and lowercase letters only.
-3. Select your subscription.
-4. For **Resource group**, create a new one or use an existing resource group.
-5. Select the **Location** to use for your storage account.
-6. Click **Create** to create your storage account.
-
-## Sign in with Azure CLI
-
-To support local development, the `DefaultAzureCredential` can authenticate as the user signed into the Azure CLI.
-
-Run the following command to sign into the Azure CLI.
-
-```azurecli
-az login
-```
-
-## Assign RBAC permissions to the storage account
-
-Azure storage accounts require explicit permissions to perform read and write operations. In order to use the storage account, you must assign permissions to the account. To do that you'll need to assing an appropriate RBAC role to your account. To get the `objectID` of the currently signed in user, run `az ad signed-in-user show --query objectId`.
-
-Run the following AzureCli command to assign the storage account permissions:
-
-```azurecli
-az role assignment create --assignee "<ObjectID>" --role "Storage Blob Data Contributor" --scope "<StorageAccountResourceID>"
-```
-
-Learn more about Azure's built-in RBAC roles, click [here](https://docs.microsoft.com/azure/role-based-access-control/built-in-roles).
-
-> Note: Azure Cli has built in helper fucntions that retrieve the storage access keys when permissions are not detected. That functionally does not transfer to the DefaultAzureCredential, which is the reason for assiging RBAC roles to your account.
-
 ## Download and Install the Azure Storage Blob SDK for Go
+This is only required if you wish to edit and run the Go application locally.
 
 From your GOPATH, execute the following command:
 
@@ -57,16 +89,18 @@ go get github.com/Azure/azure-sdk-for-go/sdk/azidentity
 go get github.com/Azure/azure-sdk-for-go/sdk/storage/azblob
 ```
 
-At this point, you can run this application. It creates an Azure storage container and blob object then cleans up after itself by deleting everything at the end.
+At this point, you can run this application. It creates an Azure storage container and blob object.
 
 ## Run the application
 
 Open the `storage-quickstart.go` file.
 
-Replace `<StorageAccountName>` with the name of your Azure storage account.
+Export your storage account name and storage account key as enviornment variables.
 
 Run the application with the `go run` command:
 
 ```bash
 go run storage-quickstart.go
 ```
+## More information
+For more information on Appvia's Terranetes project, please visit [https://terranetes.appvia.io/](https://terranetes.appvia.io/)
