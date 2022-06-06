@@ -50,6 +50,7 @@ In this demo, we're creating a storage account using the Terraform controller.
     location: eastus
     replication_type: LRS
     shared_access_key_enabled: true
+    default_network_rule: "Allow"
     tags: 
       name: test
 ```
