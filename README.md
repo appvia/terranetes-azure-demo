@@ -94,14 +94,7 @@ At this point, you can run this application. It creates an Azure storage contain
 
 ## Run the application
 
-Open the `storage-quickstart.go` file.
+This application needs to be run as a container on the cluster you deployed the terraform configuration to. There is an example yaml exposing the secrets and using a demo Go app located at /yaml/container.yaml that can be utilized. You will have to modify the secrets values based on any changes made to the azure-deployment.yaml configuration.
 
-Export your storage account name and storage account key as enviornment variables.
-
-Run the application with the `go run` command:
-
-```bash
-go run storage-quickstart.go
-```
 ## More information
 For more information on Appvia's Terranetes project, please visit [https://terranetes.appvia.io/](https://terranetes.appvia.io/)
