@@ -14,14 +14,14 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: appviastor3
-                key: key
+                key: PRIMARY_ACCESS_KEY
                 optional: false 
 
-          - name: NAME
+          - name: STOR_NAME
             valueFrom:
               secretKeyRef:
                 name: appviastor3
-                key: name
+                key: NAME
                 optional: false
       restartPolicy: Never
   backoffLimit: 2

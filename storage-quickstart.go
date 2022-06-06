@@ -23,9 +23,9 @@ func randomString() string {
 func main() {
 	fmt.Printf("Azure Blob storage quick start sample\n")
 
-	accountName, ok := os.LookupEnv("NAME")
+	accountName, ok := os.LookupEnv("STOR_NAME")
 	if !ok {
-		panic(errors.New("NAME could not be found"))
+		panic(errors.New("STOR_NAME could not be found"))
 	}
 	accountKey, ok := os.LookupEnv("PRIMARY_ACCESS_KEY")
 	if !ok {
