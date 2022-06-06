@@ -10,17 +10,17 @@ spec:
         image: tstahlfsu/azure-storage-example:latest
         imagePullPolicy: "Always"
         env:
-          - name: AZURE_STORAGE_ACCOUNT_KEY
+          - name: PRIMARY_ACCESS_KEY
             valueFrom:
               secretKeyRef:
-                name: azurekey
+                name: appviastor3
                 key: key
                 optional: false 
 
-          - name: AZURE_STORAGE_ACCOUNT_NAME
+          - name: NAME
             valueFrom:
               secretKeyRef:
-                name: azurekey
+                name: appviastor3
                 key: name
                 optional: false
       restartPolicy: Never

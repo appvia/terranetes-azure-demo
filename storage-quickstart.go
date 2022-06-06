@@ -23,13 +23,13 @@ func randomString() string {
 func main() {
 	fmt.Printf("Azure Blob storage quick start sample\n")
 
-	accountName, ok := os.LookupEnv("AZURE_STORAGE_ACCOUNT_NAME")
+	accountName, ok := os.LookupEnv("NAME")
 	if !ok {
-		panic(errors.New("AZURE_STORAGE_ACCOUNT_NAME could not be found"))
+		panic(errors.New("NAME could not be found"))
 	}
-	accountKey, ok := os.LookupEnv("AZURE_STORAGE_ACCOUNT_KEY")
+	accountKey, ok := os.LookupEnv("PRIMARY_ACCESS_KEY")
 	if !ok {
-		panic(errors.New("AZURE_STORAGE_ACCOUNT_KEY could not be found"))
+		panic(errors.New("PRIMARY_ACCESS_KEY could not be found"))
 	}
 
 	// Create a default request pipeline using your storage account name and account key.
